@@ -7,12 +7,9 @@ We performed a generalised linear mixed model with Poisson distribution on the n
 
 ## For the results
 
-We can use this figure to show the bias in publication numbers given the region and topic.
-
-[plot GNI](literature_ee/plots/Fig_topic_by_region.pdf) 
-       
-      
-
+We can use this figure to show the bias in publication numbers given the region and topic:       
+     
+[Plot for main text](literature_ee/plots/Fig_topic_by_region.pdf)
 
 ## References
 
