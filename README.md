@@ -9,8 +9,7 @@ We performed a generalised linear mixed model with Poisson distribution on the n
 
 We can use this figure to show the bias in publication numbers given the region and topic.
 
-![alt text]( literature_ee/plots/Fig_topic_by_region.pdf "Geographical bias in major topics in ecoclogy and evolution")
-
+[plot GNI](literature_ee/plots/Fig_topic_by_region.pdf) 
        
       
 
