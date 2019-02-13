@@ -9,24 +9,20 @@ rm(list=ls(all=TRUE))
 data<-fread("./data/AllData.csv", header=T, colClasses="character", na.strings = "")
 names(data)
 
-  data$TOPIC = factor(data$TOPIC)
+data$TOPIC = factor(data$TOPIC)
 levels(data$TOPIC)
-
-
 levels(data$TOPIC) <- c("AD", "CT", "DD", "IC", "MI", "PC", "PP", "SS", "SP")
 
 data$TAXON = factor(data$TAXON)
 levels(data$TAXON)
-data$TAXON[which(data$TOPIC == "PP")] = "O"
 
 
-#get the number of publications per topic, region, taxon
 
-N.data = data[, .N, by=c("TOPIC", "REGION", "TAXON")]
+
 
 
 # get the model matrix structure
-(mod.mat <- as.data.frame(model.matrix(~ REGION*TOPIC, N.data)))
+(mod.mat <- as.data.frame(model.matrix(~ REGION*TOPIC*TAXON + PERIOD, data)))
 
 
 # get the bayesian model 
