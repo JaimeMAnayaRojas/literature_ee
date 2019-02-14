@@ -38,6 +38,14 @@ Bayesian model selection testing the importance of the region by sub-topic inter
  
 ## References
 
+
+Carpenter, B., A. Gelman, M. D. Hoffman, D. Lee, B. Goodrich, M. Betancourt, M. Brubaker, J. Guo, P. Li, and A. Riddell. 2017. Stan: A probabilistic programming language. Journal of statistical software 76.
+
+
+McElreath, R. 2016. Statistical Rethinking: A Bayesian Course with Examples in R and Stan. CRC Press.
+
+
+
 @book{mcelreath2016statistical,
   title={Statistical Rethinking: A Bayesian Course with Examples in R and Stan},
   author={McElreath, Richard},
