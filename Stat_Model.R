@@ -171,8 +171,6 @@ graphics.off()
 
  
 
- op<-par(mfrow=c(3,3),mar=c(3.5,1.5,1.5,2))
- 
  
 # Adaptation x region  
  mu.Trop_X_AD <- mu.link(Trop = 1, CT = 0,DD = 0,IC = 0,MI = 0,PC = 0,PP = 0,SS = 0,SP = 0, 
@@ -184,9 +182,8 @@ graphics.off()
                          Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,
                          Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
  )
-
- dens( mu.Trop_X_AD, show.HPDI = .95, col="red",  xlim= c(0,30 ), xlab = "N papers", main = "Adaptation")
- dens( mu.Tem_X_AD, show.HPDI = .95, add = T )
+ 
+ 
 
 
 # Climate Tolerance x region  
@@ -202,8 +199,7 @@ mu.Tem_X_CT <- mu.link(Trop = 0,        CT = 1,       DD = 0,              IC = 
                                 Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
-dens( mu.Trop_X_CT, show.HPDI = .95, col="red", xlab = "N papers", main = "Climate tolerance", xlim=c(0,20))
-dens( mu.Tem_X_CT, show.HPDI = .95, add = T) 
+
 
 
 # density x region  
@@ -219,8 +215,8 @@ mu.Tem_X_DD <- mu.link(Trop = 0,        CT = 0,       DD = 1,              IC = 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
-dens( mu.Tem_X_DD, show.HPDI = .95, xlab = "N papers", main = "Density dependence", xlim=c(0,20)) 
-dens( mu.Trop_X_DD, show.HPDI = .95, col="red", add = T)
+
+
 
 
 
@@ -237,8 +233,7 @@ mu.Tem_X_IC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
-dens( mu.Tem_X_IC, show.HPDI = .95, xlab = "N papers", main = "Interspecific competition", xlim=c(0,50)) 
-dens( mu.Trop_X_IC, show.HPDI = .95, col="red",add = T)
+
 
 
 
@@ -254,8 +249,7 @@ mu.Tem_X_MI <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
-dens( mu.Tem_X_MI, show.HPDI = .95, xlab = "N papers", main = "Mimicry", xlim=c(0,20)) 
-dens( mu.Trop_X_MI, show.HPDI = .95, col="red",add = T)
+
 
 
 
@@ -268,8 +262,6 @@ mu.Trop_X_PC <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC =
 mu.Tem_X_PC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 0,       SP = 0, 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
-dens( mu.Trop_X_PC, show.HPDI = .95, col="red", xlab = "N papers", main = "Parental care", xlim=c(1,30)) 
-dens( mu.Tem_X_PC, show.HPDI = .95,add = T)
 
 
 ### Predator prey 
@@ -281,8 +273,6 @@ mu.Trop_X_PP <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC =
 mu.Tem_X_PP <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 0,       SP = 0, 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
-dens( mu.Tem_X_PP, show.HPDI = .95, xlab = "N papers", main = "Predator-prey interactions", xlim =c(1,80)) 
-dens( mu.Trop_X_PP, show.HPDI = .95, col="red",add = T)
 
 
 ### Sexual selection 
@@ -295,8 +285,6 @@ mu.Tem_X_SS <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
-dens( mu.Trop_X_SS, show.HPDI = .95, col="red",xlab = "N papers", main = "Sexual selection", xlim =c(1,25))
-dens( mu.Tem_X_SS, show.HPDI = .95, add = T ) 
 
 
 
@@ -310,8 +298,74 @@ mu.Tem_X_SP <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
+
+
+
+
+###################
+
+op<-par(mfrow=c(3,3),mar=c(4,2,2,2))
+dens( mu.Trop_X_AD, show.HPDI = .95, col="red",  xlim= c(0,30 ), xlab = "N papers", main = "Adaptation")
+dens( mu.Tem_X_AD, show.HPDI = .95, add = T )
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_AD - mu.Tem_X_AD < 0))/ length(mu.Tem_X_AD),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+
+
+dens( mu.Trop_X_CT, show.HPDI = .95, col="red", xlab = "N papers", main = "Climate tolerance", xlim=c(0,20))
+dens( mu.Tem_X_CT, show.HPDI = .95, add = T) 
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_CT - mu.Tem_X_CT < 0))/ length(mu.Tem_X_AD),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+dens( mu.Tem_X_DD, show.HPDI = .95, xlab = "N papers", main = "Density dependence", xlim=c(0,20)) 
+dens( mu.Trop_X_DD, show.HPDI = .95, col="red", add = T)
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_DD - mu.Tem_X_DD < 0))/ length(mu.Tem_X_DD),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+dens( mu.Tem_X_IC, show.HPDI = .95, xlab = "N papers", main = "Interspecific competition", xlim=c(0,50)) 
+dens( mu.Trop_X_IC, show.HPDI = .95, col="red",add = T)
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_IC - mu.Tem_X_IC < 0))/ length(mu.Tem_X_AD),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+
+dens( mu.Tem_X_MI, show.HPDI = .95, xlab = "N papers", main = "Mimicry", xlim=c(0,20)) 
+dens( mu.Trop_X_MI, show.HPDI = .95, col="red",add = T)
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_MI - mu.Tem_X_MI < 0))/ length(mu.Tem_X_MI),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+
+dens( mu.Trop_X_PC, show.HPDI = .95, col="red", xlab = "N papers", main = "Parental care", xlim=c(1,30)) 
+dens( mu.Tem_X_PC, show.HPDI = .95,add = T)
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_PC - mu.Tem_X_PC < 0))/ length(mu.Tem_X_PC),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+
+
+
+dens( mu.Tem_X_PP, show.HPDI = .95, xlab = "N papers", main = "Predator-prey interactions", xlim =c(1,80)) 
+dens( mu.Trop_X_PP, show.HPDI = .95, col="red",add = T)
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_PP - mu.Tem_X_PP < 0))/ length(mu.Tem_X_PP),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
+
+
+dens( mu.Trop_X_SS, show.HPDI = .95, col="red",xlab = "N papers", main = "Sexual selection", xlim =c(1,25))
+dens( mu.Tem_X_SS, show.HPDI = .95, add = T ) 
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_SS - mu.Tem_X_SS < 0))/ length(mu.Tem_X_SS),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
+
+
 dens( mu.Trop_X_SP, show.HPDI = .95, col="red",xlab = "N papers", main = "Speciation", xlim =c(1,20))
 dens( mu.Tem_X_SP, show.HPDI = .95, add = T ) 
+PerTembia <- paste(round(100 * length(which(mu.Trop_X_SP - mu.Tem_X_SP < 0))/ length(mu.Tem_X_SP),2), "%", sep = "")
+legend("topright", PerTembia, bty = "n")
 
 
 
