@@ -171,7 +171,7 @@ mu.link <- function(TROP, CT, DD, IC, MI, PC, SS, SP,
                   b_TROP_X_MI*TROP_X_MI + b_TROP_X_PC*TROP_X_PC +  
                   b_TROP_X_SS*TROP_X_SS+ b_TROP_X_SP*TROP_X_SP 
   )
-  return(exp(Y.est))
+  return(Y.est)
   
 }
 
@@ -297,15 +297,16 @@ mu.Tem_X_SP <- mu.link(TROP = 0,        CT = 0,   DD = 0,  IC = 0, MI = 0,  PC =
 
 
 
+220/3
 
 
 
 ######## Plot the distribution of citations
 
-svg(filename = "plots/Citations region by topic.svg", width = 697, height = 10.36 )
-op<-par(mfrow=c(3,3),mar=c(4,2,2,2))
+svg(filename = "plots/Citations region by topic.svg", width = 6.97, height = 10.36 )
+op<-par(mfrow=c(4,2),mar=c(4,2,2,2))
 
-dens( mu.Tem_X_AD, show.HPDI = .95,  xlab = "Citation rate", main = "Adaptation", xlim=c(20,60))
+dens( mu.Tem_X_AD, show.HPDI = .95,  xlab = "Citation rate", main = "Adaptation")
 dens( mu.TROP_X_AD, show.HPDI = .95,col="red",   xlim= c(0,60), add = T)
 PerTembia <- paste(round(100 * length(which(mu.TROP_X_AD - mu.Tem_X_AD < 0))/ length(mu.Tem_X_AD),2), "%", sep = "")
 legend("topright", PerTembia, bty = "n")
@@ -357,7 +358,7 @@ PerTembia <- paste(round(100 * length(which(mu.TROP_X_SS - mu.Tem_X_SS < 0))/ le
 legend("topright", PerTembia, bty = "n")
 
 
-dens( mu.Tem_X_SP , show.HPDI = .95,xlab = "Citation rate", main = "Speciation", xlim=c(10,60), ylim=c(0,.09))
+dens( mu.Tem_X_SP , show.HPDI = .95,xlab = "Citation rate", main = "Speciation", xlim=c(10,60), ylim=c(0,.12))
 dens(mu.TROP_X_SP, col="red", show.HPDI = .95, add = T ) 
 
 PerTembia <- paste(round(100 * length(which(mu.TROP_X_SP - mu.Tem_X_SP < 0))/ length(mu.Tem_X_SP),2), "%", sep = "")
