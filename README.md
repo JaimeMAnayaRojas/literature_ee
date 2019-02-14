@@ -18,6 +18,22 @@ Posterior probability density estimates of the number of publications of tropica
 Posterior probability density estimates for the citation rates of tropical and temperate publications in major topics of ecology and evolution in the web of science (WOS). The probability of temperate bias in each topic is given at the top-right corner of each panel. Colored shades represent 95% credible intervals (see Table-S# for more details). 
 
 
+## Table-S1 (tables/Supplementary Tables.xlsx: plublications) legend
+
+Parameter coefficients estimate from the effects of the region (temperate vs. tropic) and its interactions with sub-topics in ecology and evolution on the number of publications in the web of science. Sub-topics in ecology and evolution are adaptation (AD), climate tolerance (CT), density-dependence (DD), interspecific competition (IC), mimicry (MI), parental care (PC), sexual selection (SS), and speciation (SP). Values of the R statistic closed to 1 estimates whether  the four HCMC chains converged, values larger than 1.1 suggest that there were convergence issues (Carpenter et al. 2017). 
+
+
+## Table-S2 legend (tables/Supplementary Tables.xlsx: ciations) 
+
+Parameter coefficients estimate from the effects of the region (temperate vs. tropic) and its interactions with sub-topics in ecology and evolution on the rate of citations. Sub-topics in ecology and evolution are adaptation (AD), climate tolerance (CT), density-dependence (DD), interspecific competition (IC), mimicry (MI), parental care (PC), sexual selection (SS), and speciation (SP). Values of the R statistic closed to 1 estimates whether  the four HCMC chains converged, values larger than 1.1 suggest that there were convergence issues (Carpenter et al. 2017). 
+
+
+## Table-S3  legend (tables/Supplementary Tables.xlsx: ciations) 
+
+Bayesian model selection testing the importance of the region by sub-topic interaction on the number of publications and on the number of citations. Overall, the models with the region by sub-topic interaction have a better fit to the data, in the number of publications model the interaction has 100% weight of the WAIC, while in the citations model it has 88% of the weight of the WAIC.
+
+
+
 
  
 ## References
