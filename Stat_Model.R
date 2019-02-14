@@ -9,15 +9,21 @@ rm(list=ls(all=TRUE))
 data<-fread("./data/AllData.csv", header=T, colClasses="character", na.strings = "")
 names(data)
 
-  data$TOPIC = factor(data$TOPIC)
+data$TOPIC = factor(data$TOPIC)
 levels(data$TOPIC)
 
 
 levels(data$TOPIC) <- c("AD", "CT", "DD", "IC", "MI", "PC", "PP", "SS", "SP")
 
+data <- data[-which(data$TOPIC == "PP"),]
+
+
 data$TAXON = factor(data$TAXON)
 levels(data$TAXON)
-data$TAXON[which(data$TOPIC == "PP")] = "O"
+
+data$TOPIC = factor(data$TOPIC)
+levels(data$TOPIC)
+
 
 
 #get the number of publications per topic, region, taxon
@@ -33,13 +39,12 @@ N.data = data[, .N, by=c("TOPIC", "REGION", "TAXON")]
 glimmer(N ~ REGION*TOPIC + (1|TAXON), family = poisson, N.data)
 
 #Change the names for easier reading
-names(mod.mat)[2:10] <-c("Trop", "CT", "DD", "IC", "MI", "PC", "PP", "SS", "SP")
-names(mod.mat)[11:18] <- c("Trop_X_CT", "Trop_X_DD", "Trop_X_IC", "Trop_X_MI", "Trop_X_PC",
-  "Trop_X_PP", "Trop_X_SS", "Trop_X_SP")
+names(mod.mat)[-1] <-c("Trop", "CT", "DD", "IC", "MI", "PC", "SS", "SP","Trop_X_CT", "Trop_X_DD", "Trop_X_IC", "Trop_X_MI", "Trop_X_PC",
+  "Trop_X_SS", "Trop_X_SP")
 
 
 # make the dataset for the model
-d <-as.data.frame(cbind(N.data[,c("N","TAXON") ], mod.mat[,2:18]))
+d <-as.data.frame(cbind(N.data[,c("N","TAXON") ], mod.mat[,-1]))
 names(d)[1] <- "Npapers"
 levels(d$TAXON)<- 1: length(levels(d$TAXON))
 d$TAXON <- as.numeric(d$TAXON)
@@ -58,7 +63,6 @@ model.1 <- map2stan(
       b_IC*IC +
       b_MI*MI +
       b_PC*PC +
-      b_PP*PP +
       b_SS*SS +
       b_SP*SP +
       b_Trop_X_CT*Trop_X_CT +
@@ -66,7 +70,6 @@ model.1 <- map2stan(
       b_Trop_X_IC*Trop_X_IC +
       b_Trop_X_MI*Trop_X_MI +
       b_Trop_X_PC*Trop_X_PC +
-      b_Trop_X_PP*Trop_X_PP +
       b_Trop_X_SS*Trop_X_SS +
       b_Trop_X_SP*Trop_X_SP +
       v_Intercept[TAXON],
@@ -77,7 +80,6 @@ model.1 <- map2stan(
     b_IC ~ dnorm(0,10),
     b_MI ~ dnorm(0,10),
     b_PC ~ dnorm(0,10),
-    b_PP ~ dnorm(0,10),
     b_SS ~ dnorm(0,10),
     b_SP ~ dnorm(0,10),
     b_Trop_X_CT ~ dnorm(0,10),
@@ -85,7 +87,6 @@ model.1 <- map2stan(
     b_Trop_X_IC ~ dnorm(0,10),
     b_Trop_X_MI ~ dnorm(0,10),
     b_Trop_X_PC ~ dnorm(0,10),
-    b_Trop_X_PP ~ dnorm(0,10),
     b_Trop_X_SS ~ dnorm(0,10),
     b_Trop_X_SP ~ dnorm(0,10),
     v_Intercept[TAXON] ~ dnorm(0,sigma_TAXON),
@@ -96,9 +97,10 @@ model.1 <- map2stan(
 )
 
 #Check if the model converges
-tracerplot(model.1)
+#tracerplot(model.1)
 
-# Model without interactions
+
+# get the parameter# Model without interactions
 model.2 <- map2stan(
   
   alist(
@@ -110,7 +112,6 @@ model.2 <- map2stan(
       b_IC*IC +
       b_MI*MI +
       b_PC*PC +
-      b_PP*PP +
       b_SS*SS +
       b_SP*SP +
       v_Intercept[TAXON],
@@ -121,7 +122,6 @@ model.2 <- map2stan(
     b_IC ~ dnorm(0,10),
     b_MI ~ dnorm(0,10),
     b_PC ~ dnorm(0,10),
-    b_PP ~ dnorm(0,10),
     b_SS ~ dnorm(0,10),
     b_SP ~ dnorm(0,10),
     v_Intercept[TAXON] ~ dnorm(0,sigma_TAXON),
@@ -132,19 +132,18 @@ model.2 <- map2stan(
 )
 
 #check if the model converges
-tracerplot(model.2)
+#tracerplot(model.2)
 
 # compare the models, is the interaction term important
 compare(model.1, model.2)
 
 
-
-# get the parameters
+s
 (sumStat <- precis(model.1, depth = 2, prob = .95, digits = 5))
 sumStat[sumStat[,3]>0,]
 sumStat[sumStat[,4]<0,]
 
-write.csv(sumStat, "Parameters_Npapers.csv")
+write.csv(sumStat, "tables/Parameters_Npapers.csv")
 
 
 # Get the posterior probabilities and plot the values for each treatment combination
@@ -154,15 +153,15 @@ graphics.off()
 
 
 
- mu.link <- function(Trop, CT, DD, IC, MI, PC, PP, SS, SP, 
-                     Trop_X_CT, Trop_X_DD, Trop_X_IC, Trop_X_MI, Trop_X_PC, Trop_X_PP, Trop_X_SS, Trop_X_SP
+ mu.link <- function(Trop, CT, DD, IC, MI, PC, SS, SP, 
+                     Trop_X_CT, Trop_X_DD, Trop_X_IC, Trop_X_MI, Trop_X_PC,  Trop_X_SS, Trop_X_SP
                      
                      ){
 
    Y.est <- with(pos, Intercept + b_Trop*Trop + b_CT*CT + b_DD*DD + b_IC*IC + 
-                   b_MI*MI + b_PC*PC + b_PP*PP + b_SS*SS+ b_SP*SP + 
+                   b_MI*MI + b_PC*PC +  + b_SS*SS+ b_SP*SP + 
                    b_Trop_X_CT*Trop_X_CT + b_Trop_X_DD*Trop_X_DD + b_Trop_X_IC*Trop_X_IC + 
-                   b_Trop_X_MI*Trop_X_MI + b_Trop_X_PC*Trop_X_PC + b_Trop_X_PP*Trop_X_PP + 
+                   b_Trop_X_MI*Trop_X_MI + b_Trop_X_PC*Trop_X_PC +  
                    b_Trop_X_SS*Trop_X_SS+ b_Trop_X_SP*Trop_X_SP 
                    )
    return(exp(Y.est))
@@ -173,14 +172,14 @@ graphics.off()
 
  
 # Adaptation x region  
- mu.Trop_X_AD <- mu.link(Trop = 1, CT = 0,DD = 0,IC = 0,MI = 0,PC = 0,PP = 0,SS = 0,SP = 0, 
+ mu.Trop_X_AD <- mu.link(Trop = 1, CT = 0,DD = 0,IC = 0,MI = 0,PC = 0,SS = 0,SP = 0, 
                          Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,
-                         Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+                          Trop_X_SS = 0, Trop_X_SP = 0
                          )
 
- mu.Tem_X_AD <- mu.link(Trop = 0, CT = 0,DD = 0,IC = 0,MI = 0,PC = 0,PP = 0,SS = 0,SP = 0, 
+ mu.Tem_X_AD <- mu.link(Trop = 0, CT = 0,DD = 0,IC = 0,MI = 0,PC = 0,SS = 0,SP = 0, 
                          Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,
-                         Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+                         Trop_X_SS = 0, Trop_X_SP = 0
  )
  
  
@@ -190,13 +189,13 @@ graphics.off()
 
 mod.mat[which(mod.mat$Trop == 1 & mod.mat$CT ==1),]
 
-mu.Trop_X_CT <- mu.link(Trop = 1,        CT = 1,       DD = 0,              IC = 0,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                                  Trop_X_CT = 1,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Trop_X_CT <- mu.link(Trop = 1,        CT = 1,       DD = 0,              IC = 0,       MI = 0,      PC = 0,          SS = 0,       SP = 0, 
+                                  Trop_X_CT = 1,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 mod.mat[which(mod.mat$Trop == 0 & mod.mat$CT ==1),]
-mu.Tem_X_CT <- mu.link(Trop = 0,        CT = 1,       DD = 0,              IC = 0,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                                Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_CT <- mu.link(Trop = 0,        CT = 1,       DD = 0,              IC = 0,       MI = 0,      PC = 0,      SS = 0,       SP = 0, 
+                                Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
@@ -206,13 +205,13 @@ mu.Tem_X_CT <- mu.link(Trop = 0,        CT = 1,       DD = 0,              IC = 
 
 mod.mat[which(mod.mat$Trop == 1 & mod.mat$DD ==1),]
 
-mu.Trop_X_DD <- mu.link(Trop = 1,        CT = 0,       DD = 1,              IC = 0,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                        Trop_X_CT = 1,Trop_X_DD = 1,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Trop_X_DD <- mu.link(Trop = 1,        CT = 0,       DD = 1,              IC = 0,       MI = 0,      PC = 0,      SS = 0,       SP = 0, 
+                        Trop_X_CT = 1,Trop_X_DD = 1,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 mod.mat[which(mod.mat$Trop == 0 & mod.mat$DD ==1),]
-mu.Tem_X_DD <- mu.link(Trop = 0,        CT = 0,       DD = 1,              IC = 0,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_DD <- mu.link(Trop = 0,        CT = 0,       DD = 1,              IC = 0,       MI = 0,      PC = 0,       SS = 0,       SP = 0, 
+                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
@@ -224,13 +223,13 @@ mu.Tem_X_DD <- mu.link(Trop = 0,        CT = 0,       DD = 1,              IC = 
 
 mod.mat[which(mod.mat$Trop == 1 & mod.mat$IC ==1),]
 
-mu.Trop_X_IC <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 1,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                        Trop_X_CT = 1,Trop_X_DD = 1,Trop_X_IC = 1, Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Trop_X_IC <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 1,       MI = 0,      PC = 0,     SS = 0,       SP = 0, 
+                        Trop_X_CT = 1,Trop_X_DD = 1,Trop_X_IC = 1, Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 mod.mat[which(mod.mat$Trop == 0 & mod.mat$IC ==1),]
-mu.Tem_X_IC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 1,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_IC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 1,       MI = 0,      PC = 0,        SS = 0,       SP = 0, 
+                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
@@ -240,13 +239,13 @@ mu.Tem_X_IC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
 # Mimicry x region  
 
 
-mu.Trop_X_MI <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 1,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 1,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Trop_X_MI <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 1,      PC = 0,        SS = 0,       SP = 0, 
+                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 1,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
-mu.Tem_X_MI <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 1,      PC = 0,        PP = 0,        SS = 0,       SP = 0, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_MI <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 1,      PC = 0,       SS = 0,       SP = 0, 
+                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
@@ -254,48 +253,38 @@ mu.Tem_X_MI <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
 
 
 ### PARENTAL CARE
-mu.Trop_X_PC <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 0,       SP = 0, 
-                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 1,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Trop_X_PC <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,         SS = 0,       SP = 0, 
+                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 1,Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
-mu.Tem_X_PC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 0,       SP = 0, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_PC <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0,       SS = 0,       SP = 0, 
+                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
-
-### Predator prey 
-mu.Trop_X_PP <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0,        PP = 1,        SS = 0,       SP = 0, 
-                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 1, Trop_X_SS = 0, Trop_X_SP = 0
-)
-
-
-mu.Tem_X_PP <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 0,       SP = 0, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
-)
 
 
 ### Sexual selection 
-mu.Trop_X_SS <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0,        PP = 0,        SS = 1,       SP = 0, 
-                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 1, Trop_X_SP = 0
+mu.Trop_X_SS <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0,    SS = 1,       SP = 0, 
+                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_SS = 1, Trop_X_SP = 0
 )
 
 
-mu.Tem_X_SS <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 1,       SP = 0, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_SS <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0, SS = 1,       SP = 0, 
+                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
 
 
 ### Speciation 
-mu.Trop_X_SP <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0,        PP = 0,        SS = 0,       SP = 1, 
-                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 1
+mu.Trop_X_SP <- mu.link(Trop = 1,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 0,                SS = 0,       SP = 1, 
+                        Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0, Trop_X_MI = 0,Trop_X_PC = 0, Trop_X_SS = 0, Trop_X_SP = 1
 )
 
 
-mu.Tem_X_SP <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,        PP = 0,        SS = 0,       SP = 1, 
-                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_PP = 0, Trop_X_SS = 0, Trop_X_SP = 0
+mu.Tem_X_SP <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 0,       MI = 0,      PC = 1,         SS = 0,       SP = 1, 
+                       Trop_X_CT = 0,Trop_X_DD = 0,Trop_X_IC = 0,Trop_X_MI = 0,Trop_X_PC = 0,Trop_X_SS = 0, Trop_X_SP = 0
 )
 
 
@@ -304,7 +293,8 @@ mu.Tem_X_SP <- mu.link(Trop = 0,        CT = 0,       DD = 0,              IC = 
 
 ###################
 
-op<-par(mfrow=c(3,3),mar=c(4,2,2,2))
+svg(filename = "plots/N_papers region by topic.svg", width = 6.97, height = 10.36 )
+op<-par(mfrow=c(4,2),mar=c(4,2,2,2))
 dens( mu.Trop_X_AD, show.HPDI = .95, col="red",  xlim= c(0,30 ), xlab = "N papers", main = "Adaptation")
 dens( mu.Tem_X_AD, show.HPDI = .95, add = T )
 PerTembia <- paste(round(100 * length(which(mu.Trop_X_AD - mu.Tem_X_AD < 0))/ length(mu.Tem_X_AD),2), "%", sep = "")
@@ -346,16 +336,6 @@ legend("topright", PerTembia, bty = "n")
 
 
 
-
-
-dens( mu.Tem_X_PP, show.HPDI = .95, xlab = "N papers", main = "Predator-prey interactions", xlim =c(1,80)) 
-dens( mu.Trop_X_PP, show.HPDI = .95, col="red",add = T)
-PerTembia <- paste(round(100 * length(which(mu.Trop_X_PP - mu.Tem_X_PP < 0))/ length(mu.Tem_X_PP),2), "%", sep = "")
-legend("topright", PerTembia, bty = "n")
-
-
-
-
 dens( mu.Trop_X_SS, show.HPDI = .95, col="red",xlab = "N papers", main = "Sexual selection", xlim =c(1,25))
 dens( mu.Tem_X_SS, show.HPDI = .95, add = T ) 
 PerTembia <- paste(round(100 * length(which(mu.Trop_X_SS - mu.Tem_X_SS < 0))/ length(mu.Tem_X_SS),2), "%", sep = "")
@@ -367,7 +347,7 @@ dens( mu.Tem_X_SP, show.HPDI = .95, add = T )
 PerTembia <- paste(round(100 * length(which(mu.Trop_X_SP - mu.Tem_X_SP < 0))/ length(mu.Tem_X_SP),2), "%", sep = "")
 legend("topright", PerTembia, bty = "n")
 
-
+graphics.off()
 
 
 
