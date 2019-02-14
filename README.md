@@ -7,7 +7,18 @@ We performed a generalised linear mixed model with Poisson distribution on the n
 
 ## For the results
 
-We can use the figure in the *plot folder* to show the bias in publication numbers given the region and topic, additionally you can find a table with the parameters estimated, and the model comparasion in the *tables folder*       
+We can use the figure in the *plot folder* to show the bias in publication numbers given the region and topic, additionally you can find a table with the parameters estimated, and the model comparasion in the *tables folder*  
+
+### Figure 1b (plots/N_papers region by topic.pdf)
+
+Posterior probability density estimates of the number of publications of tropical and temperate publications in major topics of ecology and evolution in the web of science (WOS). The probability of temperate bias in each topic is given at the top-right corner of each panel. Colored shades represent 95% credible intervals (see Table-S# for more details).
+
+
+### Figure 2 (plots/Ciations region by topic.pdf)
+Posterior probability density estimates for the citation rates of tropical and temperate publications in major topics of ecology and evolution in the web of science (WOS). The probability of temperate bias in each topic is given at the top-right corner of each panel. Colored shades represent 95% credible intervals (see Table-S# for more details). 
+
+
+
  
 ## References
 
